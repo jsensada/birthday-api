@@ -3,7 +3,7 @@ import mysql.connector
 from flask import Flask, request, jsonify, abort
 from datetime import datetime, date
 
-db_host = os.getenv('DB_NAME') if os.getenv('DB_NAME') else "NoDBname"
+db_host = os.getenv('DB_HOST') if os.getenv('DB_HOST') else "NoDBname"
 db_name = os.getenv('DB_NAME') if os.getenv('DB_NAME') else "NoDBname"
 db_user = os.getenv('DB_USER') if os.getenv('DB_USER') else "NoDBuser"
 db_pass = os.getenv('DB_PASS') if os.getenv('DB_PASS') else "NoDBpass"
@@ -20,6 +20,11 @@ cnxpool = mysql.connector.pooling.MySQLConnectionPool(pool_name = pool_name, poo
 
 
 app = Flask(__name__)
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s %(levelname)s %(message)s',
+                    handlers=[logging.StreamHandler()])
+logger = logging.getLogger(__name__)
+
 
 def get_db_connection():
     return cnxpool.get_connection()
@@ -53,7 +58,7 @@ def create_db_schema_if_not_exists():
 
 @app.route('/health')
 def health():
-    app.logger.info('Health check for instance %s', app.instance_name)
+    app.logger.info('Health check for instance %s')
     conn = get_db_connection()
     cursor = conn.cursor()
     cursor.close()
@@ -93,9 +98,10 @@ def hello_get_birthday(username):
     return jsonify({"message": message}), 200
 
 
-@app.route('/hello/<namename>', methods=['PUT'])
+@app.route('/hello/<username>', methods=['PUT'])
 def hello_put_birthday(username):
-    app.logger.info('Processing request for instance %s', app.instance_name)
+    app.logger.info('Processing request for username: %s', username)
+    app.logger.info('Request data: %s', request.data)
     if not check_valid_username(username):
         abort(400, description='[ERROR]: <username> must contain only letters.')
 
@@ -123,5 +129,8 @@ def hello_put_birthday(username):
 
 
 if __name__ == '__main__':
+    app.logger.info('Creating database schema if not exists...')
     create_db_schema_if_not_exists()
+    app.logger.info('Database schema created.')
+    app.logger.info('Starting Flask application...')
     app.run(debug=True, host='0.0.0.0')
