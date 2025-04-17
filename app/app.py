@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify, abort
 from datetime import datetime, date
 
 db_host = os.getenv('DB_HOST') if os.getenv('DB_HOST') else "NoDBname"
+db_port = os.getenv('DB_PORT') if os.getenv('DB_PORT') else "NoDBport"
 db_name = os.getenv('DB_NAME') if os.getenv('DB_NAME') else "NoDBname"
 db_user = os.getenv('DB_USER') if os.getenv('DB_USER') else "NoDBuser"
 db_pass = os.getenv('DB_PASS') if os.getenv('DB_PASS') else "NoDBpass"
@@ -11,6 +12,7 @@ db_pass = os.getenv('DB_PASS') if os.getenv('DB_PASS') else "NoDBpass"
 
 dbconfig = {
     'host': db_host,
+    'port': db_port,
     'database': db_name,
     'user': db_user,
     'password': db_pass
@@ -40,20 +42,6 @@ def check_valid_birthday(birthday):
         return birthday_date < date.today()
     except ValueError:
         return False
-
-
-def create_db_schema_if_not_exists():
-    cnx = cnxpool.get_connection()
-    cursor = cnx.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            username VARCHAR(50) PRIMARY KEY,
-            date_of_birth DATE NOT NULL
-        )
-    """)
-    cnx.commit()
-    cursor.close()
-    cnx.close()
     
 
 @app.route('/health')
@@ -130,7 +118,6 @@ def hello_put_birthday(username):
 
 if __name__ == '__main__':
     app.logger.info('Creating database schema if not exists...')
-    create_db_schema_if_not_exists()
     app.logger.info('Database schema created.')
     app.logger.info('Starting Flask application...')
     app.run(debug=True, host='0.0.0.0')

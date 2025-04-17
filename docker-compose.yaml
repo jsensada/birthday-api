@@ -1,0 +1,42 @@
+services:
+  db:
+    image: mysql:lts
+    ports:
+      - 3306:3306
+    container_name: dev-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: birthday
+      MYSQL_USER: birthday
+      MYSQL_PASSWORD: birthday-api
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/xport.cnf:/etc/mysql/conf.d/xport.cnf
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+      timeout: 10s
+  api:
+    container_name: birthday-api
+    build:
+      dockerfile: Dockerfile
+    image: birthday-api
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 5001:5000
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: birthday
+      DB_PASS: birthday-api
+      DB_NAME: birthday
+    links:
+      - db
+volumes:
+  db_data:
+    driver: local
