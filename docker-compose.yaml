@@ -29,14 +29,11 @@ services:
         condition: service_healthy
     ports:
       - 5001:5000
-    environment:
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_USER: birthday
-      DB_PASS: birthday-api
-      DB_NAME: birthday
     links:
       - db
+    volumes:
+      - ./app.py:/app/app.py
+      - ./db/config.py:/app/db/config.py
 volumes:
   db_data:
     driver: local
