@@ -1,27 +1,16 @@
-import os, logging, re
+import logging, re
 import mysql.connector
 from flask import Flask, request, jsonify, abort
+from db.config import dbconfig
 from datetime import datetime, date
 
-db_host = os.getenv('DB_HOST') if os.getenv('DB_HOST') else "NoDBname"
-db_port = os.getenv('DB_PORT') if os.getenv('DB_PORT') else "NoDBport"
-db_name = os.getenv('DB_NAME') if os.getenv('DB_NAME') else "NoDBname"
-db_user = os.getenv('DB_USER') if os.getenv('DB_USER') else "NoDBuser"
-db_pass = os.getenv('DB_PASS') if os.getenv('DB_PASS') else "NoDBpass"
-
-
-dbconfig = {
-    'host': db_host,
-    'port': db_port,
-    'database': db_name,
-    'user': db_user,
-    'password': db_pass
-}
 pool_name = "mysql_pool"
-cnxpool = mysql.connector.pooling.MySQLConnectionPool(pool_name = pool_name, pool_size = 5, **dbconfig)
-
+cnxpool = mysql.connector.pooling.MySQLConnectionPool(pool_name = pool_name,
+                                                      pool_size = 5,
+                                                      **dbconfig)
 
 app = Flask(__name__)
+
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s %(levelname)s %(message)s',
                     handlers=[logging.StreamHandler()])
@@ -31,10 +20,8 @@ logger = logging.getLogger(__name__)
 def get_db_connection():
     return cnxpool.get_connection()
 
-
 def check_valid_username(username):
     return re.fullmatch(r'[a-zA-Z]+', username)
-
 
 def check_valid_birthday(birthday):
     try:
@@ -42,6 +29,13 @@ def check_valid_birthday(birthday):
         return birthday_date < date.today()
     except ValueError:
         return False
+    
+def get_days_until_next_birthday(dob: date) -> int:
+    today = date.today()
+    next_birthday = dob.replace(year=today.year)
+    if next_birthday < today:
+        next_birthday = next_birthday.replace(year=today.year + 1)
+    return (next_birthday - today).days
     
 
 @app.route('/health')
@@ -69,14 +63,9 @@ def hello_get_birthday(username):
     if not result:
         abort(404, description='User not found.')
 
-    dob = result[0]
-    today = date.today()
-    next_birthday = dob.replace(year=today.year)
 
-    if next_birthday < today:
-        next_birthday = next_birthday.replace(year=today.year + 1)
-
-    days_until_birthday = (next_birthday - today).days
+    days_until_birthday = get_days_until_next_birthday(result[0])
+    app.logger.info('Days until birthday: %s', days_until_birthday)
 
     if days_until_birthday == 0:
         message = f"Hello, {username}! Happy birthday!"
@@ -91,7 +80,7 @@ def hello_put_birthday(username):
     app.logger.info('Processing request for username: %s', username)
     app.logger.info('Request data: %s', request.data)
     if not check_valid_username(username):
-        abort(400, description='[ERROR]: <username> must contain only letters.')
+        abort(400, description='[ERROR]: username must contain only letters.')
 
     data = request.get_json()
     if not data or 'dateOfBirth' not in data:
@@ -117,7 +106,5 @@ def hello_put_birthday(username):
 
 
 if __name__ == '__main__':
-    app.logger.info('Creating database schema if not exists...')
-    app.logger.info('Database schema created.')
     app.logger.info('Starting Flask application...')
     app.run(debug=True, host='0.0.0.0')
