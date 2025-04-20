@@ -18,6 +18,10 @@ resource "google_compute_instance_template" "birthday_api_servers" {
     boot         = true
   }
 
+  network_interface {
+    network = "default"
+  }
+
   service_account {
     scopes = ["cloud-platform"]
   }
