@@ -18,7 +18,7 @@ packer {
 
 source "googlecompute" "ubuntu_image" {
   project_id          = var.project_id
-  source_image_family = "ubuntu-2404-lts"
+  source_image_family = "ubuntu-2404-lts-amd64"
   zone                = var.zone
   ssh_username        = var.ssh_username
   machine_type        = "e2-medium"
