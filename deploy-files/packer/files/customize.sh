@@ -2,13 +2,13 @@
 
 ## Installations content:
 sudo DEBIAN_FRONTEND=noninteractive apt-get update
-sudo DEBIAN_FRONTEND=noninteractive apt-get install python3 python3-pip gunicorn -y
+sudo DEBIAN_FRONTEND=noninteractive apt-get install python3 python3-pip python3-flask gunicorn -y
+sudo pip install mysql-connector-python --break-system-packages
 
 ## Setting up the birthday-api app
 sudo mkdir /opt/birthday-api
 sudo mv /tmp/app.py /opt/birthday-api/app.py
 sudo adduser birthday-api --gecos "" --disabled-password
-sudo pip3 install -r /tmp/requirements.txt --break-system-packages
 sudo chown -R birthday-api:birthday-api /opt/birthday-api
 
 ## Create a systemd service for birthday-api
