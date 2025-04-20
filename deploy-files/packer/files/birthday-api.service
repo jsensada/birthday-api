@@ -1,0 +1,16 @@
+[Unit]
+Description=birthday API
+After=network.target
+
+[Service]
+User=birthday-api
+Group=birthday-api
+WorkingDirectory=/opt/birthday-api
+EnvironmentFile=/opt/birthday-api/.env
+ExecStart=/usr/bin/gunicorn --bind 0.0.0.0:5000 app:app
+StandardOutput=file:/var/log/birthday-api.log
+StandardError=inherit
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
