@@ -6,7 +6,7 @@ resource "google_compute_instance_template" "birthday_api_servers" {
   metadata_startup_script = <<-EOT
     #!/bin/bash
     cat <<EOF > /opt/birthday-api/.env
-    DB_HOST = ${google_sql_database_instance.brithday_db.ip_address[0].ip_address}
+    DB_HOST=${google_sql_database_instance.brithday_db.ip_address[0].ip_address}
     DB_USER=${data.google_secret_manager_secret_version.birthday_db_username.secret_data}
     DB_PASS=${data.google_secret_manager_secret_version.birthday_db_password.secret_data}
     EOF
