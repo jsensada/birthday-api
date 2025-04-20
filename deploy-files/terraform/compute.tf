@@ -6,18 +6,11 @@ resource "google_compute_instance_template" "birthday_api_servers" {
   metadata_startup_script = <<-EOT
     #!/bin/bash
     cat <<EOF > /opt/birthday-api/.env
-    DB_HOST="${DB_HOST}"
-    DB_USER="${DB_USER}"
-    DB_PASS="${DB_PASS}"
+    DB_HOST=google_sql_database_instance.brithday_db.connection_name
+    DB_USER=data.google_secret_manager_secret_version.birthday_db_username.secret_data
+    DB_PASS=data.google_secret_manager_secret_version.birthday_db_password.secret_data
     EOF
   EOT
-
-  metadata = {
-    DB_HOST = google_sql_database_instance.brithday_db.connection_name
-    DB_USER = data.google_secret_manager_secret_version.birthday_db_username.secret_data
-    DB_PASS = data.google_secret_manager_secret_version.birthday_db_password.secret_data
-  }
-
 
   disk {
     source_image = var.image_name
@@ -32,7 +25,7 @@ resource "google_compute_instance_template" "birthday_api_servers" {
 
 resource "google_compute_instance_group_manager" "birthday_api_servers_pool" {
   name               = "birthday-api-pool"
-  zone               = var.zone
+  zone               = "${var.region}-a"
   base_instance_name = "birthday-api"
   target_size        = var.instance_pool_size
   version {

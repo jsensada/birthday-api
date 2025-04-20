@@ -2,7 +2,7 @@ resource "google_sql_database_instance" "brithday_db" {
   name                = "birthday-db"
   deletion_protection = false
   database_version    = "MYSQL_8_4"
-  region              = "europe-southwest1"
+  region              = var.region
   settings {
     tier    = "db-custom-2-8192"
     edition = "ENTERPRISE"
