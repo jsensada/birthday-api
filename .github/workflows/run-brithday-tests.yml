@@ -24,7 +24,7 @@ jobs:
         run: docker compose -f docker-compose.yaml up -d
 
       - name: Run tester build
-        run: docker build . --env DB_HOST=127.0.0.1 --network host --target=tester
+        run: docker build . --build-arg DB_HOST=127.0.0.1 --network host --target=tester
 
       - name: Shutdown services
         if: always()
