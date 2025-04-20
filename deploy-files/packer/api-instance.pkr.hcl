@@ -22,7 +22,7 @@ source "googlecompute" "ubuntu_image" {
   zone                = var.zone
   ssh_username        = var.ssh_username
   machine_type        = "e2-medium"
-  image_name          = "birthday-api"
+  image_name          = "birthday-api-{{timestamp}}"
 }
 
 build {
