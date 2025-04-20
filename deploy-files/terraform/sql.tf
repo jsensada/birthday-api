@@ -10,6 +10,12 @@ resource "google_sql_database_instance" "brithday_db" {
   }
 }
 
+resource "google_sql_database" "birthday_db_schema" {
+  name     = "birthdays"
+  instance = google_sql_database_instance.birthday_db.name
+  charset  = "utf8mb4"
+}
+
 resource "google_sql_user" "birthday_user" {
   name     = data.google_secret_manager_secret_version.birthday_db_username.secret_data
   password = data.google_secret_manager_secret_version.birthday_db_password.secret_data
