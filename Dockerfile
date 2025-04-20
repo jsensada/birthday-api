@@ -24,6 +24,9 @@ FROM base as tester
 COPY tests/ tests/
 COPY tests/requirements.txt tests/
 RUN pip install --no-cache-dir -r tests/requirements.txt
+
+ARG DB_HOST
+ENV DB_HOST=${DB_HOST}
 RUN python -m pytest -s tests/
 
 # ---
