@@ -40,6 +40,12 @@ resource "google_compute_instance_group_manager" "birthday_api_servers_pool" {
   version {
     instance_template = google_compute_instance_template.birthday_api_servers.id
   }
+  update_policy {
+    type                     = "PROACTIVE"
+    minimal_action           = "REPLACE"
+    max_surge_fixed          = 1
+    max_unavailable_fixed    = 0
+  }
 }
 
 resource "google_compute_health_check" "birthday_api_hc" {
