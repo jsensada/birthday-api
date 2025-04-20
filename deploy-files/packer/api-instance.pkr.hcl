@@ -40,6 +40,10 @@ build {
     source = "../../app.py"
     destination = "/tmp/app.py"
   }
+  provisioner "file" {
+    source = "../../db/config.py"
+    destination = "/tmp/config.py"
+  }
   provisioner "shell" {
     script = "files/customize.sh"
   }

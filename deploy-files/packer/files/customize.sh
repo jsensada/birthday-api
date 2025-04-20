@@ -7,7 +7,9 @@ sudo pip install mysql-connector-python --break-system-packages
 
 ## Setting up the birthday-api app
 sudo mkdir /opt/birthday-api
+sudo mkdir /opt/birthday-api/db
 sudo mv /tmp/app.py /opt/birthday-api/app.py
+sudo mv /tmp/config.py /opt/birthday-api/db/config.py
 sudo adduser birthday-api --gecos "" --disabled-password
 sudo chown -R birthday-api:birthday-api /opt/birthday-api
 
