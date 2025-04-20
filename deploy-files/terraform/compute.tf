@@ -6,9 +6,9 @@ resource "google_compute_instance_template" "birthday_api_servers" {
   metadata_startup_script = <<-EOT
     #!/bin/bash
     cat <<EOF > /opt/birthday-api/.env
-    DB_HOST=google_sql_database_instance.brithday_db.connection_name
-    DB_USER=data.google_secret_manager_secret_version.birthday_db_username.secret_data
-    DB_PASS=data.google_secret_manager_secret_version.birthday_db_password.secret_data
+    DB_HOST=${google_sql_database_instance.brithday_db.connection_name}
+    DB_USER=${data.google_secret_manager_secret_version.birthday_db_username.secret_data}
+    DB_PASS=${data.google_secret_manager_secret_version.birthday_db_password.secret_data}
     EOF
   EOT
 
@@ -25,6 +25,11 @@ resource "google_compute_instance_template" "birthday_api_servers" {
   service_account {
     scopes = ["cloud-platform"]
   }
+  
+  lifecycle {
+    create_before_destroy = true
+  }
+
 }
 
 resource "google_compute_instance_group_manager" "birthday_api_servers_pool" {
