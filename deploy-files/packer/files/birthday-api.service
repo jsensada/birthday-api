@@ -1,14 +1,14 @@
 [Unit]
-Description=Brithday API
+Description=birthday API
 After=network.target
 
 [Service]
-User=brithday-api
-Group=brithday-api
-WorkingDirectory=/opt/brithday-api
-EnvironmentFile=/opt/brithday-api/.env
+User=birthday-api
+Group=birthday-api
+WorkingDirectory=/opt/birthday-api
+EnvironmentFile=/opt/birthday-api/.env
 ExecStart=/usr/bin/gunicorn --bind 0.0.0.0:5000 app:app
-StandardOutput=file:/var/log/brithday-api.log
+StandardOutput=file:/var/log/birthday-api.log
 StandardError=inherit
 Restart=always
 
