@@ -23,13 +23,8 @@ jobs:
       - name: Start services with docker-compose
         run: docker compose -f docker-compose.yaml up -d
 
-      - name: Wait for DB to be ready
-        run: |
-          echo "Waiting for DB to be ready..."
-          sleep 10 # Replace this with healthcheck logic if available
-
       - name: Run tester build
-        run: docker build . --build-arg DB_HOST=127.0.0.1 --network host --target=tester
+        run: docker build . --env DB_HOST=127.0.0.1 --network host --target=tester
 
       - name: Shutdown services
         if: always()
