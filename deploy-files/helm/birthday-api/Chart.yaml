@@ -1,0 +1,6 @@
+apiVersion: v2
+name: birthday-api
+description: Helm chart to deploy the birthday-api application
+type: application
+version: 0.1.0
+appVersion: "0.1.0-beta"

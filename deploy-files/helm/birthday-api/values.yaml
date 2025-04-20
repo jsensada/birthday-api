@@ -1,0 +1,45 @@
+# Default values for birthday-api.
+## Database settings:
+db:
+  host: "db"
+  user: "birthday"
+  password: "birthday-api"
+  name: "birthday"
+
+## Container image settings
+image:
+  repository: "birthday-api"
+  tag: "latest"
+  pullPolicy: "IfNotPresent"
+
+## Service settings
+service:
+  enabled: true
+  type: ClusterIP
+  port: 5000
+  targetPort: 5000
+  name: birthday-api
+
+## Resource requests and limits
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "250m"
+    memory: "256Mi"
+
+## Ingress settings
+ingress:
+  enabled: true
+  class: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: birthday-api.local
+      paths:
+        - /
+  tls:
+    - hosts:
+        - birthday-api.local
+      secretName: tls-secret
