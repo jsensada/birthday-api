@@ -1,6 +1,6 @@
 terraform {
   backend "gcs" {
-    bucket = "birthday-api-20250419-tfstate"
+    #bucket = "xxxxxxxx-tfstate" # To setup later
     prefix = "terraform/tfstate"
   }
   required_providers {
