@@ -1,3 +1,5 @@
+variable "project_id" {}
+
 variable "machine_type" {
   description = "Machine type for the instances"
   default     = "e2-small"
