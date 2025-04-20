@@ -4,8 +4,9 @@ resource "google_sql_database_instance" "brithday_db" {
   database_version    = "MYSQL_8_4"
   region              = "europe-southwest1"
   settings {
-    tier    = "db-e2-small"
+    tier    = "db-custom-2-8192"
     edition = "ENTERPRISE"
+    # Using public IP to simplify the exercise
   }
 }
 
